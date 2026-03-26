@@ -41,3 +41,11 @@ output "role-parsing-without-path" {
 output "ust-docker-labels" {
   value = module.dd_task_ust_docker_labels
 }
+
+output "container-definition-only" {
+  value = module.dd_container_definition_only
+}
+
+output "container-definition-only-minimal" {
+  value = module.dd_container_definition_only_minimal
+}
