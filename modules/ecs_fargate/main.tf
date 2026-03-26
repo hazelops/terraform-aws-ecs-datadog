@@ -8,6 +8,7 @@
 ################################################################################
 
 resource "aws_ecs_task_definition" "this" {
+  count = var.create_task_definition ? 1 : 0
 
   container_definitions = jsonencode(
     concat(
