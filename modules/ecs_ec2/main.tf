@@ -7,7 +7,9 @@
 # Task Definition
 ################################################################################
 
-resource "aws_ecs_task_definition" "datadog_agent" {
+resource "aws_ecs_task_definition" "this" {
+  count = var.create_task_definition ? 1 : 0
+
   family = var.family
 
   container_definitions = jsonencode(local.dd_agent_container)
@@ -66,7 +68,7 @@ resource "aws_ecs_task_definition" "datadog_agent" {
 
   # Volumes - includes Datadog host volumes and user-provided volumes
   dynamic "volume" {
-    for_each = local.all_volumes
+    for_each = local.modified_volumes
 
     content {
       name      = volume.value.name

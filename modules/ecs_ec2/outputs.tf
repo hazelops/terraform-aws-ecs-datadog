@@ -4,99 +4,113 @@
 # Copyright 2025-present Datadog, Inc.
 
 ################################################################################
-# Task Definition Outputs
+# Datadog Agent Container Definition (available regardless of create_task_definition)
+################################################################################
+
+output "container_definition" {
+  description = "Datadog agent container definition to merge into your own task definition."
+  value       = one(local.dd_agent_container)
+}
+
+output "datadog_volumes" {
+  description = "Volumes required by the Datadog agent container."
+  value       = local.modified_volumes
+}
+
+################################################################################
+# Task Definition Outputs (only available when create_task_definition = true)
 ################################################################################
 
 output "container_definitions" {
   description = "A list of valid container definitions provided as a single valid JSON document."
-  value       = aws_ecs_task_definition.datadog_agent.container_definitions
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].container_definitions : null
 }
 
 output "execution_role_arn" {
   description = "ARN of the task execution role."
-  value       = aws_ecs_task_definition.datadog_agent.execution_role_arn
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].execution_role_arn : null
 }
 
 output "family" {
   description = "A unique name for your task definition."
-  value       = aws_ecs_task_definition.datadog_agent.family
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].family : null
 }
 
 output "ipc_mode" {
   description = "IPC resource namespace to be used for the containers."
-  value       = aws_ecs_task_definition.datadog_agent.ipc_mode
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].ipc_mode : null
 }
 
 output "network_mode" {
   description = "Docker networking mode to use for the containers."
-  value       = aws_ecs_task_definition.datadog_agent.network_mode
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].network_mode : null
 }
 
 output "pid_mode" {
   description = "Process namespace to use for the containers."
-  value       = aws_ecs_task_definition.datadog_agent.pid_mode
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].pid_mode : null
 }
 
 output "placement_constraints" {
   description = "Rules that are taken into consideration during task placement."
-  value       = aws_ecs_task_definition.datadog_agent.placement_constraints
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].placement_constraints : null
 }
 
 output "proxy_configuration" {
   description = "Configuration block for the App Mesh proxy."
-  value       = aws_ecs_task_definition.datadog_agent.proxy_configuration
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].proxy_configuration : null
 }
 
 output "requires_compatibilities" {
   description = "Set of launch types required by the task."
-  value       = aws_ecs_task_definition.datadog_agent.requires_compatibilities
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].requires_compatibilities : null
 }
 
 output "skip_destroy" {
   description = "Whether to retain the old revision when the resource is destroyed or replacement is necessary."
-  value       = aws_ecs_task_definition.datadog_agent.skip_destroy
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].skip_destroy : null
 }
 
 output "tags" {
   description = "Key-value map of resource tags."
-  value       = aws_ecs_task_definition.datadog_agent.tags
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].tags : null
 }
 
 output "task_role_arn" {
   description = "ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services."
-  value       = aws_ecs_task_definition.datadog_agent.task_role_arn
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].task_role_arn : null
 }
 
 output "track_latest" {
   description = "Whether should track latest ACTIVE task definition on AWS or the one created with the resource stored in state."
-  value       = aws_ecs_task_definition.datadog_agent.track_latest
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].track_latest : null
 }
 
 output "volume" {
   description = "Configuration block for volumes that containers in your task may use."
-  value       = aws_ecs_task_definition.datadog_agent.volume
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].volume : null
 }
 
 # Attribute reference outputs
 
 output "arn" {
   description = "Full ARN of the Task Definition (including both family and revision)."
-  value       = aws_ecs_task_definition.datadog_agent.arn
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].arn : null
 }
 
 output "arn_without_revision" {
   description = "ARN of the Task Definition with the trailing revision removed."
-  value       = aws_ecs_task_definition.datadog_agent.arn_without_revision
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].arn_without_revision : null
 }
 
 output "revision" {
   description = "Revision of the task in a particular family."
-  value       = aws_ecs_task_definition.datadog_agent.revision
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].revision : null
 }
 
 output "tags_all" {
   description = "Map of tags assigned to the resource, including inherited tags."
-  value       = aws_ecs_task_definition.datadog_agent.tags_all
+  value       = var.create_task_definition ? aws_ecs_task_definition.this[0].tags_all : null
 }
 
 ################################################################################
@@ -105,22 +119,22 @@ output "tags_all" {
 
 output "service_id" {
   description = "ARN that identifies the service. Only available if create_service = true."
-  value       = try(aws_ecs_service.datadog_agent[0].id, null)
+  value       = try(aws_ecs_service.this[0].id, null)
 }
 
 output "service_name" {
   description = "Name of the service. Only available if create_service = true."
-  value       = try(aws_ecs_service.datadog_agent[0].name, null)
+  value       = try(aws_ecs_service.this[0].name, null)
 }
 
 output "service_cluster" {
   description = "ARN of cluster which the service runs on. Only available if create_service = true."
-  value       = try(aws_ecs_service.datadog_agent[0].cluster, null)
+  value       = try(aws_ecs_service.this[0].cluster, null)
 }
 
 output "service_desired_count" {
   description = "Number of instances of the task definition. Only available if create_service = true."
-  value       = try(aws_ecs_service.datadog_agent[0].desired_count, null)
+  value       = try(aws_ecs_service.this[0].desired_count, null)
 }
 
 ################################################################################

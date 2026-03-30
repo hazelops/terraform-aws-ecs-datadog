@@ -315,6 +315,15 @@ variable "propagate_tags" {
 # Task Definition
 ################################################################################
 
+variable "create_task_definition" {
+  description = "Whether to create the aws_ecs_task_definition resource. Set to false to only output the Datadog agent container definition and volumes, so they can be composed into your own task definition."
+  type        = bool
+  default     = true
+}
+
+# NOTE: family is kept required even when create_task_definition = false,
+# because it is used for naming IAM resources (policies, roles) which may
+# still be created regardless of the task definition.
 variable "family" {
   description = "A unique name for your task definition"
   type        = string
