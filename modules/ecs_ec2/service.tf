@@ -12,14 +12,14 @@ locals {
   service_name = var.service_name != null ? var.service_name : "${var.family}-datadog-agent"
 }
 
-resource "aws_ecs_service" "datadog_agent" {
-  count = var.create_service ? 1 : 0
+resource "aws_ecs_service" "this" {
+  count = var.create_task_definition && var.create_service ? 1 : 0
 
   name    = local.service_name
   cluster = var.cluster_arn
 
   # Use latest task definition revision
-  task_definition = aws_ecs_task_definition.datadog_agent.arn
+  task_definition = aws_ecs_task_definition.this[0].arn
 
   # Daemon scheduling strategy - one agent per EC2 instance
   launch_type         = "EC2"
@@ -54,6 +54,6 @@ resource "aws_ecs_service" "datadog_agent" {
 
   # Ensure task definition is created before service
   depends_on = [
-    aws_ecs_task_definition.datadog_agent
+    aws_ecs_task_definition.this
   ]
 }

@@ -324,9 +324,16 @@ variable "dd_orchestrator_explorer" {
 # Task Definition
 ################################################################################
 
+variable "create_task_definition" {
+  description = "Whether to create the aws_ecs_task_definition resource. Set to false to only output the Datadog agent container definition and volumes."
+  type        = bool
+  default     = true
+}
+
 variable "container_definitions" {
-  description = "A list of valid [container definitions](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html). Please note that you should only provide values that are part of the container definition document"
+  description = "A list of valid [container definitions](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html). Required when create_task_definition is true."
   type        = any
+  default     = "[]"
 }
 
 variable "cpu" {
@@ -367,8 +374,9 @@ variable "execution_role" {
 }
 
 variable "family" {
-  description = "A unique name for your task definition"
+  description = "A unique name for your task definition. Required when create_task_definition is true."
   type        = string
+  default     = null
 }
 
 # Not Fargate Compatible
@@ -468,6 +476,12 @@ variable "tags" {
   description = "A map of additional tags to add to the task definition/set created"
   type        = map(string)
   default     = null
+}
+
+variable "create_task_role" {
+  description = "Whether to create the ECS task role. Set to false if the role is managed externally (e.g., by a parent module)."
+  type        = bool
+  default     = true
 }
 
 variable "task_role" {

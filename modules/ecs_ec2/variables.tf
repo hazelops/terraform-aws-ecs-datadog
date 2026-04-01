@@ -315,6 +315,15 @@ variable "propagate_tags" {
 # Task Definition
 ################################################################################
 
+variable "create_task_definition" {
+  description = "Whether to create the aws_ecs_task_definition resource. Set to false to only output the Datadog agent container definition and volumes, so they can be composed into your own task definition."
+  type        = bool
+  default     = true
+}
+
+# NOTE: family is kept required even when create_task_definition = false,
+# because it is used for naming IAM resources (policies, roles) which may
+# still be created regardless of the task definition.
 variable "family" {
   description = "A unique name for your task definition"
   type        = string
@@ -384,6 +393,12 @@ variable "execution_role" {
     condition     = var.execution_role == null || try(var.execution_role.arn != null, false)
     error_message = "If 'execution_role' is set, 'arn' must be a non-null string."
   }
+}
+
+variable "create_task_role" {
+  description = "Whether to create the ECS task role. Set to false if the role is managed externally (e.g., by a parent module)."
+  type        = bool
+  default     = true
 }
 
 variable "task_role" {

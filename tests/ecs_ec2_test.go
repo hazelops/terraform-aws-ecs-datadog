@@ -107,3 +107,25 @@ func (s *ECSEC2Suite) TestHostNetworking() {
 	taskArn := terraform.Output(s.T(), s.terraformOptions, "host_mode_task_arn")
 	s.Contains(taskArn, s.testPrefix+"-host-mode", "Task ARN should contain the correct family name")
 }
+
+// TestContainerDefinitionOnly tests that the module can output just the container
+// definition and volumes without creating an aws_ecs_task_definition resource
+func (s *ECSEC2Suite) TestContainerDefinitionOnly() {
+	log.Println("TestContainerDefinitionOnly: Running test...")
+
+	// Verify container definition is returned
+	containerDef := terraform.OutputJson(s.T(), s.terraformOptions, "container_def_only_dd_agent")
+	s.NotEmpty(containerDef, "Container definition should not be empty")
+
+	// Verify volumes are returned
+	volumes := terraform.OutputJson(s.T(), s.terraformOptions, "container_def_only_dd_volumes")
+	s.NotEmpty(volumes, "Datadog volumes should not be empty")
+}
+
+// TestNoTaskRole tests that the module works when task role creation is disabled
+func (s *ECSEC2Suite) TestNoTaskRole() {
+	log.Println("TestNoTaskRole: Running test...")
+
+	taskArn := terraform.Output(s.T(), s.terraformOptions, "no_task_role_task_arn")
+	s.Contains(taskArn, s.testPrefix+"-no-task-role", "Task ARN should contain the correct family name")
+}

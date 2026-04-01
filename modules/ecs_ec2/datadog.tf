@@ -113,8 +113,8 @@ locals {
     }
   ] : []
 
-  # Merge user-provided volumes with Datadog host volumes
-  all_volumes = concat(
+  # Merge Datadog host volumes with user-provided volumes
+  modified_volumes = concat(
     local.dd_host_volumes,
     local.dd_log_volumes,
     local.apm_dsd_volume,

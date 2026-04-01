@@ -37,6 +37,48 @@ module "datadog_ecs_fargate_task" {
 }
 ```
 
+### ECS Fargate — Container Definition Only
+
+Set `create_task_definition = false` to get the Datadog agent container definition and volumes without creating a task definition. This lets you merge them into your own `aws_ecs_task_definition`:
+
+```hcl
+module "datadog_agent" {
+  source = "DataDog/ecs-datadog/aws//modules/ecs_fargate"
+
+  create_task_definition = false
+
+  dd_api_key_secret = {
+    arn = "arn:aws:secretsmanager:us-east-1:0000000000:secret:example-secret"
+  }
+}
+
+resource "aws_ecs_task_definition" "this" {
+  family                   = "my-app"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 512
+  memory                   = 1024
+
+  container_definitions = jsonencode(concat(
+    [module.datadog_agent.container_definition],
+    [
+      {
+        name      = "my-app"
+        image     = "my-app:latest"
+        essential = true
+      }
+    ]
+  ))
+
+  dynamic "volume" {
+    for_each = module.datadog_agent.datadog_volumes
+    content {
+      name = volume.value.name
+    }
+  }
+}
+```
+
 ### ECS on EC2
 
 ```hcl
@@ -57,3 +99,8 @@ module "datadog_agent" {
   cluster_arn = "arn:aws:ecs:us-east-1:0000000000:cluster/my-cluster"
 }
 ```
+
+## Examples
+
+- [ECS Fargate — Full Task Definition](examples/ecs_fargate/) — Module creates and manages the task definition
+- [ECS Fargate — Container Definition Only](examples/ecs_fargate_container_definition/) — Module outputs container definition for use in your own task definition
