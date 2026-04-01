@@ -395,6 +395,12 @@ variable "execution_role" {
   }
 }
 
+variable "create_task_role" {
+  description = "Whether to create the ECS task role. Set to false if the role is managed externally (e.g., by a parent module)."
+  type        = bool
+  default     = true
+}
+
 variable "task_role" {
   description = "The ARN of the IAM role that allows your Amazon ECS container task to make calls to other AWS services. Contains:\n  - `arn` (string): The ARN of the IAM role.\n  - `add_dd_ecs_permissions` (bool): Whether to automatically add Datadog ECS permissions to the role to fetch a provided Datadog API key secret."
   type = object({

@@ -121,3 +121,11 @@ func (s *ECSEC2Suite) TestContainerDefinitionOnly() {
 	volumes := terraform.OutputJson(s.T(), s.terraformOptions, "container_def_only_dd_volumes")
 	s.NotEmpty(volumes, "Datadog volumes should not be empty")
 }
+
+// TestNoTaskRole tests that the module works when task role creation is disabled
+func (s *ECSEC2Suite) TestNoTaskRole() {
+	log.Println("TestNoTaskRole: Running test...")
+
+	taskArn := terraform.Output(s.T(), s.terraformOptions, "no_task_role_task_arn")
+	s.Contains(taskArn, s.testPrefix+"-no-task-role", "Task ARN should contain the correct family name")
+}
